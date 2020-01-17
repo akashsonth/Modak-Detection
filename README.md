@@ -53,7 +53,7 @@ In case SVM is to be fine-tuned later, collect validation images for both classe
 Run the python 'script data_preprocess.py'. A prompt will appear asking whether data augmentation is to be done or not.
 
 ### Step 3 (Training and tuning the model):
-Run the python script 'train.py'. A prompt will appear asking whether fine-tuning is to be done or not. This helps tune the SVM model based on the validation metrics. Also rename the SVM model (which is saved in the form of a pickle file) to avoid rewriting the modak recognition model ('linearSVM.pkl').
+Run the python script 'train.py'. A prompt will appear asking whether fine-tuning is to be done or not. This helps tune the SVM model based on the validation metrics. Also change the name of the SVM model (which is saved in the form of a pickle file) in the Python script to avoid rewriting the modak recognition model ('linearSVM.pkl').
 
 ### Step 4 (Testing the model):
 Run the python script 'test_single.py' in case single image is to be tested. A prompt will appear asking for the entire image path.
