@@ -10,7 +10,8 @@ The second part details the procedure to run the code .
 1. Data Collection-
 Images are collecting from Google images using the Chrome extension 'Fatkun Batch Download Image'.\
 Alternatively, images can also be obtained using Microsoft's Bing Image Search API.\
-All the images are resized to 224x224x3.
+All the images are resized to 224x224x3. \
+Images have been grouped into two folders (corresponding to the classes) as there are only 2 classes. An alternate and more popular method would be to add a csv file with the image labels.
 
 2. Augmentation-
 The augmentation methods used in this project are grayscale conversion, adding speckle noise, flipping the image horizontally, and rotating the image by a random angle. Although these augmentation methods have been applied individually, multiple augmentations can also be applied on the same image. Other augmentation methods such as affine transformation, skew, shift, padding, and color transformation such as brightness can also be performed.
