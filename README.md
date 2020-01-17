@@ -22,7 +22,7 @@ An SVM with a linear kernel is used for classifying the extracted features since
 
 4. Training and tuning the model-
 Features for all the images are extracted from VGG19 and compiled. These are then fed to train the SVM. The hyperparameter C for SVM is varied from 100000 to 0.00001 in powers of 10. Optimum value of C is obtained as 0.0001 at which validation accuracy is maximum, i.e., 80%.
-The test accuracy obtained at this C is 85%. (See images in the screenshots folder for confusion matrix)\
+The test accuracy obtained at optimum value of C is 85%. (See images in the screenshots folder for confusion matrix)\
 'Screenshots/Validation-- C 1e4.png'- Validation metrics for C = 10000 \
 'Screenshots/Validation-- C 1e-3.png'- Validation metrics for C = 0.001 \
 'Screenshots/Validation-- C 1e-4.png'- Validation metrics for C = 0.0001 \
