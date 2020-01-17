@@ -2,14 +2,10 @@
 print("Importing libraries...")
 import os, os.path
 import numpy as np
-import math
 import torch
 import torch.nn as nn 
-import torch.optim as optim
-from torch.optim import lr_scheduler
 import torchvision
 from torchvision import datasets, models, transforms
-import cv2 as cv
 from sklearn.svm import SVC 
 from sklearn.svm import LinearSVC
 from sklearn.metrics import confusion_matrix
@@ -21,6 +17,7 @@ print("Libraries imported")
 HOME_DIR = os.getcwd()
 TESTDATA_DIR = os.path.join(HOME_DIR, 'Data/Test')
 
+#Initialize arrays for testing the SVM
 test_x = np.zeros((1,4096))
 test_y = np.zeros((1), dtype='int64')
 
@@ -71,10 +68,12 @@ for img_name in os.listdir(os.path.join(TESTDATA_DIR, label)):
     test_x = np.concatenate((test_x,np_out))
     test_y = np.concatenate((test_y, np.array([1])))
 
+#Remove the initial row of zeros present due to initialization    
 test_x = test_x[1:,:]   
 test_y = test_y[1:]    
 
+print("----------Test Metrics----------")
 print("Accuracy =", svm_model_linear.score(test_x, test_y)) 
 svm_predictions = svm_model_linear.predict(test_x)
 test_cm = confusion_matrix(test_y, svm_predictions) 
-print(test_cm)
+print("Confusion Matrix =\n", test_cm)

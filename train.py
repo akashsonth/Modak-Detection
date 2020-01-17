@@ -2,14 +2,10 @@
 print("Importing libraries...")
 import os, os.path
 import numpy as np
-import math
 import torch
 import torch.nn as nn 
-import torch.optim as optim
-from torch.optim import lr_scheduler
 import torchvision
 from torchvision import datasets, models, transforms
-import cv2 as cv
 from sklearn.svm import SVC 
 from sklearn.svm import LinearSVC
 from sklearn.metrics import confusion_matrix
@@ -45,11 +41,11 @@ model_conv.classifier = new_classifier
 model_conv.eval()
 
 
-#Initial arrays for training SVM
+#Initialize arrays for training and tuning the SVM
 train_x = np.zeros((1,4096))
 train_y = np.zeros((1), dtype='int64')
-# val_x = np.zeros((1,4096))
-# val_y = np.zeros((1), dtype='int64')
+val_x = np.zeros((1,4096))
+val_y = np.zeros((1), dtype='int64')
 
 print("Extracting features...")
 #Extract features for training data
@@ -68,30 +64,38 @@ for img_name in os.listdir(TRAINDATA_DIR):
         #Class 0
         train_y = np.concatenate((train_y, np.array([0])))
 
-# #Extract features for validation data
-# for img_name in os.listdir(VALDATA_DIR):
-#     image = Image.open(os.path.join(VALDATA_DIR, img_name))
-#     image_t = transform(image)
-#     batch_t = torch.unsqueeze(image_t, 0)
-#     out = model_conv(batch_t)
-#     np_out = np.asarray(out)
 
-#     val_x = np.concatenate((val_x,np_out))
+#Extract features for validation data
+label = 'neg'
+for img_name in os.listdir(os.path.join(VALDATA_DIR, label)):
+    image = Image.open(os.path.join(VALDATA_DIR, label, img_name))
+    image_t = transform(image)
+    batch_t = torch.unsqueeze(image_t, 0)
+    out = model_conv(batch_t)
+    np_out = np.asarray(out)
+    val_x = np.concatenate((val_x,np_out))
+    val_y = np.concatenate((val_y, np.array([0])))
+
+#Preprocess all the images of Class 1
+label = 'pos'
+for img_name in os.listdir(os.path.join(VALDATA_DIR, label)):
+    image = Image.open(os.path.join(VALDATA_DIR, label, img_name))
+    image_t = transform(image)
+    batch_t = torch.unsqueeze(image_t, 0)
+    out = model_conv(batch_t)
+    np_out = np.asarray(out)
+    val_x = np.concatenate((val_x,np_out))
+    val_y = np.concatenate((val_y, np.array([1])))        
+print("Features extracted")
     
-#     if img_name[0] == 'p': 
-#         #Class 1
-#         val_y = np.concatenate((val_y, np.array([1])))
-#     else:
-#         #Class 0
-#         val_y = np.concatenate((val_y, np.array([0])))        
-# print("Features extracted")
-    
+
+#Remove the initial row of zeros present due to initialization    
 train_x = train_x[1:,:]   
 train_y = train_y[1:]
-# val_x = val_x[1:,:]   
-# val_y = val_y[1:]
+val_x = val_x[1:,:]   
+val_y = val_y[1:]
 
-#SVM 
+#SVM training
 print("Training Linear SVM...")
 svm_model_linear = LinearSVC(C = 1e-5, verbose=0, max_iter=5000).fit(train_x, train_y) 
 print("Training complete")
@@ -100,3 +104,10 @@ print("Training complete")
 with open('linearSVM.pkl', 'wb') as fid:
     pickle.dump(svm_model_linear, fid)  
 print("Model Saved")
+
+#Testing on the validation data
+print("----------Validation Metrics----------")
+print("Accuracy =", svm_model_linear.score(val_x, val_y)) 
+svm_predictions = svm_model_linear.predict(val_x)
+test_cm = confusion_matrix(val_y, svm_predictions) 
+print("Confusion matrix =\n",test_cm)

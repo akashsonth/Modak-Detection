@@ -2,14 +2,10 @@
 print("Importing libraries...")
 import os, os.path
 import numpy as np
-import math
 import torch
 import torch.nn as nn 
-import torch.optim as optim
-from torch.optim import lr_scheduler
 import torchvision
 from torchvision import datasets, models, transforms
-import cv2 as cv
 from sklearn.svm import SVC 
 from sklearn.svm import LinearSVC
 from sklearn.metrics import confusion_matrix
@@ -19,7 +15,8 @@ print("Libraries imported")
 
 #Directories
 HOME_DIR = os.getcwd()
-img_name = os.path.join(HOME_DIR, 'Pictures/Test/momos.jpg')
+img_name = str(input("Enter complete path to image: \n"))
+OBJECT_REC = "modak" #Name of object to be recognized. Replace it with required object name
 
 #Similar transforms as ImageNet on which model has been trained
 from torchvision import transforms
@@ -53,5 +50,7 @@ with open('linearSVM.pkl', 'rb') as fid:
     test_x = np.asarray(out)
 
 svm_predictions = svm_model_linear.predict(test_x)
-print(svm_predictions)
-
+if(svm_predictions == 1):
+    print("Image is of " + OBJECT_REC)
+else:
+    print("Image is not of " + OBJECT_REC)
