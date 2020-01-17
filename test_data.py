@@ -46,27 +46,25 @@ model_conv.eval()
 with open('linearSVM.pkl', 'rb') as fid:
     svm_model_linear = pickle.load(fid)
 
-#Preprocess all the images of Class 0
-label = 'neg'
-for img_name in os.listdir(os.path.join(TESTDATA_DIR, label)):
-    image = Image.open(os.path.join(TESTDATA_DIR, label, img_name))
-    image_t = transform(image)
-    batch_t = torch.unsqueeze(image_t, 0)
-    out = model_conv(batch_t)
-    np_out = np.asarray(out)
-    test_x = np.concatenate((test_x,np_out))
-    test_y = np.concatenate((test_y, np.array([0])))
+labels = ['neg', 'pos']
+m = (len(os.listdir(os.path.join(TESTDATA_DIR, labels[0]))) 
+    + len(os.listdir(os.path.join(TESTDATA_DIR, labels[1])))) #Size of testing data
 
-#Preprocess all the images of Class 1
-label = 'pos'
-for img_name in os.listdir(os.path.join(TESTDATA_DIR, label)):
-    image = Image.open(os.path.join(TESTDATA_DIR, label, img_name))
-    image_t = transform(image)
-    batch_t = torch.unsqueeze(image_t, 0)
-    out = model_conv(batch_t)
-    np_out = np.asarray(out)
-    test_x = np.concatenate((test_x,np_out))
-    test_y = np.concatenate((test_y, np.array([1])))
+j = 0 #Counter for printing progress
+for label in labels:
+    for img_name in os.listdir(os.path.join(TESTDATA_DIR, label)):
+        print("Progress - ", int(j*100/m), "%", end ="\r")
+        j += 1
+        image = Image.open(os.path.join(TESTDATA_DIR, label, img_name))
+        image_t = transform(image)
+        batch_t = torch.unsqueeze(image_t, 0)
+        out = model_conv(batch_t)
+        np_out = np.asarray(out)
+        test_x = np.concatenate((test_x,np_out))
+        if label == 'neg':
+            test_y = np.concatenate((test_y, np.array([0])))
+        else:
+            test_y = np.concatenate((test_y, np.array([1])))
 
 #Remove the initial row of zeros present due to initialization    
 test_x = test_x[1:,:]   

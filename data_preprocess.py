@@ -41,8 +41,8 @@ def dataAugment(img, label, count):
 
 if __name__ == "__main__":
     print("Processing images...")
-    dataAugment_flag = input("Do you want to perform data augmentation?: y/n \n")
-    
+    dataAugment_flag = input("Do you want to perform data augmentation?: Enter y/n \n")
+
     #Preprocess all the images of Class 0
     count = 0
     label = 'neg'
@@ -60,6 +60,7 @@ if __name__ == "__main__":
     label = 'pos'
     for img_name in os.listdir(os.path.join(PICS_DIR, label)):
         count += 1
+        img = cv.imread(os.path.join(PICS_DIR, label, img_name))   
         if(dataAugment_flag == 'y' or dataAugment_flag == 'Y'):
             dataAugment(img, label, count)
         else:
